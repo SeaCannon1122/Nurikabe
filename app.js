@@ -13,12 +13,18 @@ const DIRECTION = {
   RIGHT: 3
 };
 
-let width = 0
-let height = 0
+let width; let height;
 
-let field = [];
-let ds_field = [];
-let cell_field = [];
+let field; let ds_field; let cell_field;
+let won;
+
+let rand; let random_step;
+
+let start_time; let timer_interval; 
+
+const won_label = document.getElementById("won-label");
+const timer = document.getElementById("timer");
+const seed_label = document.getElementById("seed-label");
 
 function set_cell(x, y, value)
 {
@@ -68,23 +74,32 @@ function clear_field()
   for (let x = 0; x < width; x++) for (let y = 0; y < height; y++) set_cell(x, y, CELL.EMPTY);
 }
 
-function mulberry32(seed) {
-  return function() {
-    let t = seed += 0x6D2B79F5;
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-let rand = null;
-let random_step = 0;
-
-function random_branch(free_count)
+function generate_paths(path_count)
 {
-  random_step++;
+  let count = Math.floor(rand() * (path_count + 1));
 
-  return (rand() * free_count < 1.5 - Math.log(random_step) / 20.);
+  if (random_step < width * height / 2)
+  {
+    if (path_count === 4 && count < 3) count = 3;
+    else if (path_count === 3 && count < 2) count = 2;
+    else if (path_count === 2 && count < 1) count = 1;
+    else if (path_count === 1) count = 1;
+  }
+
+  let paths = [false, false, false, false];
+
+  for (let i = 0; i < count; i++)
+  {
+    let index = Math.floor(rand() * (path_count - i));
+
+    for (let j = 0; ;j++) if (paths[j] === false) { if (index === 0) {paths[j] = true; break;} index--;}
+  }
+
+  //return ( * free_count < 1.5 - Math.log(random_step) / 20.);
   //return (free_count * rand() < 1.2);
+
+  random_step++;
+  return paths;
 }
 
 const game_field = document.getElementById("game-field");
@@ -193,6 +208,10 @@ function check_state()
     }
   }
 
+
+  clearInterval(timer_interval);
+  won = true;
+  won_label.textContent = "!!! YOU WON !!!";
   return true;
 }
 
@@ -218,10 +237,15 @@ function generate_field_stream_recursive(x, y, src_dir)
   if (src_dir !== DIRECTION.UP    && y > 0)           if (all_empty_neighbot(x, y-1, DIRECTION.DOWN))   {up_free = true; free_count++};
   if (src_dir !== DIRECTION.DOWN  && y < height - 1)  if (all_empty_neighbot(x, y+1, DIRECTION.UP))     {down_free = true; free_count++};
   
-  if (left_free)  {if (random_branch(free_count)) field[x-1+y*width] = CELL.MARKED; else left_free = false;}
-  if (right_free) {if (random_branch(free_count)) field[x+1+y*width] = CELL.MARKED; else right_free = false;}
-  if (up_free)    {if (random_branch(free_count)) field[x+(y-1)*width] = CELL.MARKED; else up_free = false;}
-  if (down_free)  {if (random_branch(free_count)) field[x+(y+1)*width] = CELL.MARKED; else down_free = false;}
+  if (free_count === 0) return;
+
+  let paths = generate_paths(free_count);
+  let path_i = 0;
+
+  if (left_free) {{if(paths[path_i]) field[x-1+y*width] = CELL.MARKED; else left_free = false;} path_i++; }
+  if (right_free) {{if(paths[path_i]) field[x+1+y*width] = CELL.MARKED; else right_free = false;} path_i++; }
+  if (up_free) {{if(paths[path_i]) field[x+(y-1)*width] = CELL.MARKED; else up_free = false;} path_i++; }
+  if (down_free) {{if(paths[path_i]) field[x+(y+1)*width] = CELL.MARKED; else down_free = false;} path_i++; }
 
   if (left_free)  generate_field_stream_recursive(x-1, y, DIRECTION.RIGHT);
   if (right_free) generate_field_stream_recursive(x+1, y, DIRECTION.LEFT);
@@ -229,17 +253,24 @@ function generate_field_stream_recursive(x, y, src_dir)
   if (down_free)  generate_field_stream_recursive(x, y+1, DIRECTION.UP);
 }
 
-function create_field(w, h)
+function create_field(w, h, seed)
 {
+  if (timer_interval) clearInterval(timer_interval);
+
   width = w; height = h;
   field = Array(width * height).fill(CELL.EMPTY);
   cell_field = []
 
-  let seed = Math.random() * 999999;
-  rand = mulberry32(seed);
+  seed_label.textContent = `id: w${width}h${height}s${seed}`;
+  rand = () => {
+    let t = seed += 0x6D2B79F5;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
   random_step = 0;
   
-  generate_field_stream_recursive(Math.floor(width / 2), Math.floor(height / 2), DIRECTION.NONE);
+  generate_field_stream_recursive(Math.floor(rand() * width), Math.floor(rand() * height), DIRECTION.NONE);
 
   ds_field = Array(width * height).fill(0);
 
@@ -252,8 +283,8 @@ function create_field(w, h)
     }
   }
 
-  game_field.style.gridTemplateColumns = `repeat(${width}, ${500/width}px)`;
-  game_field.style.gridTemplateRows = `repeat(${height}, ${500/width}px)`;
+  game_field.style.gridTemplateColumns = `repeat(${width}, ${700/width}px)`;
+  game_field.style.gridTemplateRows = `repeat(${height}, ${700/width}px)`;
 
   game_field.innerHTML = "";
 
@@ -271,8 +302,6 @@ function create_field(w, h)
 
     set_cell(i % width, Math.floor(i / width), field[i]);
   }
-
-  clear_field();
 
   document.querySelectorAll(".cell").forEach(cell => {
     cell.addEventListener("mousedown", (e) => {
@@ -306,6 +335,19 @@ function create_field(w, h)
     });
 
   });
+
+  clear_field();
+  won = false;
+  won_label.textContent = "";
+
+  start_time = Date.now();
+
+  timer_interval = setInterval(() => {timer.textContent = `${((Date.now() - start_time) / 1000).toFixed(1)} ms`;}, 100);
+}
+
+function new_field(w, h)
+{
+  create_field(w, h, Math.floor(Math.random() * 999999));
 }
 
 const clear_button = document.getElementById("clear-button");
@@ -316,13 +358,13 @@ const size_15_button = document.getElementById("15-button");
 const size_20_button = document.getElementById("20-button");
 const size_25_button = document.getElementById("25-button");
 
-size_10_button.addEventListener("click", () => {create_field(10,10); });
-size_15_button.addEventListener("click", () => {create_field(15,15); });
-size_20_button.addEventListener("click", () => {create_field(20,20); });
-size_25_button.addEventListener("click", () => {create_field(25,25); });
+size_10_button.addEventListener("click", () => {new_field(10,10); });
+size_15_button.addEventListener("click", () => {new_field(15,15); });
+size_20_button.addEventListener("click", () => {new_field(20,20); });
+size_25_button.addEventListener("click", () => {new_field(25,25); });
 
 document.addEventListener("mouseup", () => {
-  if (mouse_down === true) if (check_state()) alert('!!! YOU WON !!!');
+  if (mouse_down === true) if (won === false) check_state();
   mouse_down = false;
   mouse_color = null;
 });
@@ -332,6 +374,19 @@ document.addEventListener("contextmenu", (e) => {
 });
 
 const solve_button = document.getElementById("solve-button");
-solve_button.addEventListener("click", () => {solve(); if (check_state()) alert('!!! Solved !!!'); });
+solve_button.addEventListener("click", () => {if (won === false) {solve(); check_state();} });
 
-create_field(10, 10);
+const load_input_field = document.getElementById("load-input-field");
+load_input_field.value = "";
+
+function create_field_from_id()
+{
+  let match = load_input_field.value.match(/w(\d+)h(\d+)s(\d+)/);
+
+  create_field(Number(match[1]), Number(match[2]), Number(match[3]))
+}
+
+const load_button = document.getElementById("load-button");
+load_button.addEventListener("click", () => {create_field_from_id(); });
+
+new_field(10, 10);

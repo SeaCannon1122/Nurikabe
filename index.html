@@ -16,19 +16,29 @@
         
 
         <div class="sidebar-content">
-
+          
           <p class="current-game-header">Current game</p>
-          <button id="clear-button" class="sidebar-button">clear</button>
+
+          <p id="won-label" class="won-label"></p>
+          <div id="timer" class="timer">0 : 0 : 0</div>
           <p id="seed-label" class="seed-label"></p>
+          <button id="clear-button" class="sidebar-button">clear</button>
 
           <p class="difficulty-header">Difficulty</p>
+
           <button id="10-button" class="sidebar-button">10x10</button>
           <button id="15-button" class="sidebar-button">15x15</button>
           <button id="20-button" class="sidebar-button">20x20</button>
           <button id="25-button" class="sidebar-button">25x25</button>
 
           <p class="solve-header">Solve</p>
+
           <button id="solve-button" class="sidebar-button">solve</button>
+
+          <p class="load-header">Load game</p>
+          
+          <input id="load-input-field" class="load-input-field" placeholder="game id">
+          <button id="load-button" class="sidebar-button">submit</button>
 
         </div>
         
