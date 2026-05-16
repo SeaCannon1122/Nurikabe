@@ -1,0 +1,78 @@
+ body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.header-row {
+  display: block;
+  text-align: center;
+  font-size: xx-large;
+}
+.below-header {
+  display: block;
+  margin-top: 40px;
+}
+.sidebar {
+  display: inline-block;
+  width: 150px;
+  background-color: rgb(200, 200, 200);
+  border-radius: 10px;
+}
+.sidebar-content {
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 20px;
+}
+.sidebar-button
+{
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.current-game-header {
+  text-align: center;
+  font-weight: bold;
+}
+
+.difficulty-header {
+  margin-top: 50px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.solve-header {
+  margin-top: 50px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.content-field {
+  display: inline-block;
+  width: 80%;
+  vertical-align: top;
+}
+
+.game-field-flex {
+  display: flex;
+  justify-content: center;
+}
+
+.game-field {
+  display: grid;
+  overflow: hidden;
+  margin: 0 auto;
+  background-color: black;
+  gap: 2px;
+  padding: 2px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  font-weight: bolder;
+  font-size: 20px;
+}

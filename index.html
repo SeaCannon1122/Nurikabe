@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+
+    <title>NURIKABE</title>
+    
+    <link rel="stylesheet" href="style.css">
+  </head>
+
+  <body>
+    <div class="header-row">NURIKABE</div>
+
+    <div class="below-header">
+      <div class="sidebar">
+        
+
+        <div class="sidebar-content">
+
+          <p class="current-game-header">Current game</p>
+          <button id="clear-button" class="sidebar-button">clear</button>
+          <p id="seed-label" class="seed-label"></p>
+
+          <p class="difficulty-header">Difficulty</p>
+          <button id="10-button" class="sidebar-button">10x10</button>
+          <button id="15-button" class="sidebar-button">15x15</button>
+          <button id="20-button" class="sidebar-button">20x20</button>
+          <button id="25-button" class="sidebar-button">25x25</button>
+
+          <p class="solve-header">Solve</p>
+          <button id="solve-button" class="sidebar-button">solve</button>
+
+        </div>
+        
+      </div>
+
+      <div class="content-field">
+        <div class="game-field-flex">
+          <div id="game-field" class="game-field">
+          </div>
+        </div>
+      </div>
+      
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
