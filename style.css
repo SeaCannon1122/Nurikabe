@@ -3,10 +3,26 @@
 }
 
 .header-row {
-  display: block;
-  text-align: center;
-  font-size: xx-large;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 1rem;
 }
+
+.title {
+  margin: 0;
+  font-size: xx-large;
+  font-weight: bold;
+}
+
+.github-link {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  text-decoration: none;
+}
+
 .below-header {
   display: block;
   margin-top: 40px;
@@ -21,28 +37,34 @@
   margin-left: 20px;
   margin-right: 20px;
   margin-bottom: 20px;
+  text-align: center;
 }
 .sidebar-button
 {
   display: block;
   margin-top: 10px;
   margin-bottom: 10px;
+  border: none;
+  border-radius: 5px;
+  width: 160px;
+}
+
+.sidebar-button:hover {
+  background-color: rgb(41, 118, 211);
+  color: white;
 }
 
 .current-game-header {
-  text-align: center;
   font-weight: bold;
 }
 
 .won-label{
-  text-align: center;
   font-weight: bold;
   color: green;
   font-size: 20px;
 }
 
 .timer {
-  text-align: center;
   font-weight: bold;
   color: red;
   font-size: 30px;
@@ -54,20 +76,17 @@
 
 .difficulty-header {
   margin-top: 50px;
-  text-align: center;
   font-weight: bold;
 }
 
 .solve-header {
   margin-top: 50px;
   font-weight: bold;
-  text-align: center;
 }
 
 .load-header {
   margin-top: 50px;
   font-weight: bold;
-  text-align: center;
 }
 
 .load-input-field
@@ -90,9 +109,13 @@
   display: grid;
   overflow: hidden;
   margin: 0 auto;
+
+  transform: translateX(-50px);
+
   background-color: black;
   gap: 2px;
   padding: 2px;
+
   user-select: none;
   -webkit-user-select: none;
 }

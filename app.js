@@ -342,7 +342,7 @@ function create_field(w, h, seed)
 
   start_time = Date.now();
 
-  timer_interval = setInterval(() => {timer.textContent = `${((Date.now() - start_time) / 1000).toFixed(1)} ms`;}, 100);
+  timer_interval = setInterval(() => {timer.textContent = `${((Date.now() - start_time) / 1000).toFixed(1)} s`;}, 100);
 }
 
 function new_field(w, h)
